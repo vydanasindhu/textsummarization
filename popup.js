@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
     const summarizeButton = document.getElementById("summarize");
     const summaryContainer = document.getElementById("summary");
-  
+    summarizePython()
     summarizeButton.addEventListener("click", async () => {
       const activeTab = await getActiveTab();
       chrome.scripting.executeScript(
         {
           target: { tabId: activeTab.id },
-          function: summarize,
+          function: summarizePython,
         },
         (result) => {
           summaryContainer.innerText = result[0].result;
@@ -33,16 +33,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // TODO: Change function name
-  async function summarizePython() {
-    const text = "This is some text to summarize.";
-      const response = await fetch("http://text-summarization/summarize", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text }),
-      });
-      const data = await response.json();
-      return data.summary;
+  function summarizePython() {
+    const data = { message: "Hello, server!" };
+    fetch('http://localhost:8000/summarize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("summary").innerHTML = data['response']
+    })
+    .catch(error => console.error(error));
   }
+  
   
