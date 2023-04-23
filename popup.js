@@ -31,4 +31,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const articleElement = document.querySelector("article") || document.body;
     return articleElement.innerText;
   }
+
+  // TODO: Change function name
+  async function summarizePython() {
+    const text = "This is some text to summarize.";
+      const response = await fetch("http://text-summarization/summarize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
+      const data = await response.json();
+      return data.summary;
+  }
   
