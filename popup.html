@@ -1,23 +1,75 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      body {
-        width: 300px;
-        height: 200px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-      }
-    </style>
-    <script src="summarizer.js"></script>
-    <script src="popup.js"></script>
-  </head>
-  <body>
+<head>
+  <style>
+    body {
+      width: 350px;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: none;
+    }
+
+    .tags-container {
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .tags-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .tags-content {
+      font-size: 14px;
+      color: #555;
+      word-wrap: break-word;
+      margin-top: 5px;
+    }
+
+  </style>
+  <script src="summarizer.js"></script>
+  <script src="popup.js"></script>
+</head>
+<body>
+  <div class="container">
     <button id="summarize">Summarize Article</button>
-    <textarea id="summary"></textarea>
-    <div id="tags"></div>
-  </body>
+    <textarea id="summary" readonly></textarea>
+    <div class="tags-container">
+      <div class="tags-label">Tags:</div>
+      <div id="tags" class="tags-content"></div>
+    </div>
+  </div>
+</body>
 </html>
