@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const numSentences = numSentencesInput.value;
     const result = await chrome.scripting.executeScript({
       target: { tabId: activeTab.id },
-      func: summarizePython,
+      func: summarize,
       args: [numSentences], 
     });
     if (result[0].result) {
@@ -27,20 +27,8 @@ async function getActiveTab() {
   return tab;
 }
 
-function summarize() {
-  const articleText = extractArticleText();
-  const summary = SimpleSummarizer.summarize(articleText);
-  return summary;
-}
-
-function extractArticleText() {
-  const articleElement = document.querySelector("article") || document.body;
-  return articleElement.innerText;
-}
-
-async function summarizePython(numSentences) { 
-  const articleText = document.querySelector("article") || document.body;
-  const message = articleText.innerText;
+async function summarize(numSentences) { 
+  const message = window.location.href;
   const data = { message: message, numSentences: numSentences }; 
   try {
     const response = await fetch("http://localhost:8000/summarize", {

@@ -11,6 +11,7 @@ from sumy.summarizers.lsa import LsaSummarizer
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.utils import get_stop_words
 import math
+from newspaper import Article
 
 app = Flask(__name__)
 CORS(app)
@@ -95,7 +96,11 @@ def example_api():
     message = data['message']
     numSentences = data.get('numSentences', 2)  # Get the number of sentences from the request data
     numSentences = max(1, int(numSentences))  # Ensure numSentences is at least 1
-    summary, tags = ensemble_summarization(message, numSentences)  # Use the numSentences value when calling the summarize function
+    article = Article(message)
+    article.download()
+    article.parse()
+    text = article.text
+    summary, tags = ensemble_summarization(text, numSentences)  # Use the numSentences value when calling the summarize function
     response_data = {'summary': summary, 'tags': tags}
     return jsonify(response_data)
 
