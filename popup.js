@@ -28,7 +28,8 @@ async function getActiveTab() {
 }
 
 function summarize() {
-  const articleText = extractArticleText();
+  const articleText =   window.location.href;
+  console.log(articleText)
   const summary = SimpleSummarizer.summarize(articleText);
   return summary;
 }
@@ -39,8 +40,8 @@ function extractArticleText() {
 }
 
 async function summarizePython(numSentences) { 
-  const articleText = document.querySelector("article") || document.body;
-  const message = articleText.innerText;
+  const articleText = window.location.href;
+  const message = articleText;
   const data = { message: message, numSentences: numSentences }; 
   try {
     const response = await fetch("http://localhost:8000/summarize", {

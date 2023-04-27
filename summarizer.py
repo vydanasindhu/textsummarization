@@ -6,8 +6,13 @@ from spacy.lang.en.stop_words import STOP_WORDS
 from string import punctuation
 from heapq import nlargest
 from collections import Counter
-
-def summarize(text, number_of_sentences):
+from newspaper import Article
+   
+def summarize(url, number_of_sentences):
+    article = Article(url)
+    article.download()
+    article.parse()
+    text = article.text
     nlp = spacy.load('en_core_web_sm')
     doc= nlp(text)
 
