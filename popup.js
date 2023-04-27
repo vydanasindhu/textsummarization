@@ -2,11 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const summarizeButton = document.getElementById("summarize");
   const summaryContainer = document.getElementById("summary");
   const tagContainer = document.getElementById("tags");
+  const numSentencesInput = document.getElementById("num-sentences");
+
   summarizeButton.addEventListener("click", async () => {
     const activeTab = await getActiveTab();
+    const numSentences = numSentencesInput.value;
     const result = await chrome.scripting.executeScript({
       target: { tabId: activeTab.id },
-      function: summarizePython,
+      func: summarizePython,
+      args: [numSentences], 
     });
     if (result[0].result) {
       summaryContainer.innerText = result[0].result["summary"] || "";
@@ -34,15 +38,17 @@ function extractArticleText() {
   return articleElement.innerText;
 }
 
-async function summarizePython() {
+async function summarizePython(numSentences) { 
   const articleText = document.querySelector("article") || document.body;
-  const message = articleText.innerText
-  const data = { message: message};
+  const message = articleText.innerText;
+  const data = { message: message, numSentences: numSentences }; 
   try {
     const response = await fetch("http://localhost:8000/summarize", {
       method: "POST",
-      headers: { "Content-Type": "application/json; charset=utf-8",
-      "Accept-Charset": "utf-8" },
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Accept-Charset": "utf-8"
+      },
       body: JSON.stringify(data),
     });
     const result = await response.json();
@@ -51,4 +57,3 @@ async function summarizePython() {
     console.error(error);
   }
 }
-

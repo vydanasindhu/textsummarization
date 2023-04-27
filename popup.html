@@ -1,3 +1,4 @@
+<!-- popup.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,6 +14,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+    }
+
+    input[type="number"] {
+      padding: 5px 10px;
+      width: 100px;
+      margin-bottom: 10px;
     }
 
     button {
@@ -57,13 +64,14 @@
       word-wrap: break-word;
       margin-top: 5px;
     }
-
   </style>
   <script src="summarizer.js"></script>
   <script src="popup.js"></script>
 </head>
 <body>
   <div class="container">
+    <label for="num-sentences">Number of sentences:</label>
+    <input type="number" id="num-sentences" min="1" required>
     <button id="summarize">Summarize Article</button>
     <textarea id="summary" readonly></textarea>
     <div class="tags-container">
