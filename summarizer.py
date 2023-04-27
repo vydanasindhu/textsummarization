@@ -10,7 +10,6 @@ from collections import Counter
 def summarize(text, number_of_sentences):
     nlp = spacy.load('en_core_web_sm')
     doc= nlp(text)
-    print(len(list(doc.sents)))
 
     # Token Filtering
     keyword = []
@@ -55,7 +54,9 @@ CORS(app)
 def example_api():
     data = request.json
     message = data['message']
-    summary, tags = summarize(message, 2)
+    numSentences = data.get('numSentences', 2)  # Get the number of sentences from the request data
+    numSentences = max(1, int(numSentences))  # Ensure numSentences is at least 1
+    summary, tags = summarize(message, numSentences)  # Use the numSentences value when calling the summarize function
     response_data = {'summary': summary, 'tags': tags}
     return jsonify(response_data)
 
