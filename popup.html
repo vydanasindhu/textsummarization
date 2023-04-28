@@ -64,8 +64,18 @@
       word-wrap: break-word;
       margin-top: 5px;
     }
+    .chip {
+      display: inline-block;
+      padding: 5px 10px;
+      font-size: 14px;
+      color: #555;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      margin: 2px 5px;
+      background-color: #007bff;
+      color: white;
+    }
   </style>
-  <script src="summarizer.js"></script>
   <script src="popup.js"></script>
 </head>
 <body>
@@ -76,7 +86,8 @@
     <textarea id="summary" readonly></textarea>
     <div class="tags-container">
       <div class="tags-label">Tags:</div>
-      <div id="tags" class="tags-content"></div>
+      <br>
+      <div id="tags" class="tags-content-container"></div> 
     </div>
   </div>
 </body>

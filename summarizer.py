@@ -16,6 +16,9 @@ from newspaper import Article
 app = Flask(__name__)
 CORS(app)
 
+import nltk
+nltk.download('punkt')
+
 # Post Processing techniques
 def post_process_summary(summary):
     if not summary:

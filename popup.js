@@ -14,13 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     if (result[0].result) {
       summaryContainer.innerText = result[0].result["summary"] || "";
-      tagContainer.innerText = result[0].result["tags"] || "";
+      tagContainer.innerHTML = "";
+      const tags = result[0].result["tags"] || [];
+      tags.forEach(tag => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.innerText = tag;
+        tagContainer.appendChild(chip);
+      });
     } else {
       summaryContainer.innerText = "Summary not available";
       tagContainer.innerText = "Tags not available";
     }
   });
 });
+
 
 async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
