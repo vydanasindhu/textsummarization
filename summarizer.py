@@ -12,6 +12,7 @@ from sumy.nlp.tokenizers import Tokenizer
 from sumy.utils import get_stop_words
 import math
 from newspaper import Article
+from textblob import TextBlob
 
 app = Flask(__name__)
 CORS(app)
@@ -47,11 +48,11 @@ def summarize_using_spacy(text, number_of_sentences):
     freq_word = Counter(keyword)
 
     # Normalization
-    max_freq = Counter(keyword).most_common(1)[0][1]
-    for word in freq_word.keys():  
-            freq_word[word] = (freq_word[word]/max_freq)
+    if len(Counter(keyword)):
+        max_freq = Counter(keyword).most_common(1)[0][1]
+        for word in freq_word.keys():  
+                freq_word[word] = (freq_word[word]/max_freq)
     
-
     # Weighing Sentences
     sent_strength={}
     for sent in doc.sents:
@@ -66,6 +67,13 @@ def summarize_using_spacy(text, number_of_sentences):
 
     final_sentences = [ w.text for w in summarized_sentences ]
     summary = ' '.join(final_sentences)
+
+    # sentiment Analysis
+    doc_mini = nlp(summary)
+    sentiment = doc_mini.sentiment
+    print("SENTIMENT: ", sentiment)
+    print(f"Polarity: {sentiment.polarity:.2f}")
+    print(f"Subjectivity: {sentiment.subjectivity:.2f}")
 
     # Get top-5 tags
     tags = [tag for tag, _ in freq_word.most_common(5)]
@@ -93,6 +101,39 @@ def ensemble_summarization(text, count, sumy_weight=0.8, spacy_weight=0.2):
     return post_process_summary(combined_summary), top_5_tags
 
 
+# Sentiment Analysis of the text
+def get_sentiment(text):
+    nlp = spacy.load('en_core_web_md')
+    doc = nlp(text)
+    sentences = [sent.text for sent in doc.sents]
+    polarity = 0.0
+    subjectivity = 0.0
+    for sentence in sentences:
+        blob = TextBlob(sentence)
+        polarity += blob.sentiment.polarity
+        subjectivity += blob.sentiment.subjectivity
+    num_sentences = len(sentences)
+    avg_polarity = polarity / num_sentences
+    avg_subjectivity = subjectivity / num_sentences
+
+    return get_sentiment_scale(avg_polarity), get_subjectivity_scale(avg_subjectivity)
+
+def get_sentiment_scale(avg_polarity):
+    if avg_polarity >= 0.2:
+        return 1                    # Positive
+    elif avg_polarity >= -0.2:
+        return 0                    # Neutral
+    else: 
+        return -1                   # Negative
+
+def get_subjectivity_scale(avg_subjectivity):
+    if avg_subjectivity < 0.4:
+        return 1                    # objective
+    elif avg_subjectivity < 0.6:
+        return 0                    # Neutral
+    else: 
+        return -1                   # subjective
+
 @app.route('/summarize', methods=['POST'])
 def example_api():
     data = request.json
@@ -104,7 +145,13 @@ def example_api():
     article.parse()
     text = article.text
     summary, tags = ensemble_summarization(text, numSentences)  # Use the numSentences value when calling the summarize function
-    response_data = {'summary': summary, 'tags': tags}
+    polarity, subjectivity = get_sentiment(text)
+    response_data = {
+        'summary': summary, 
+        'tags': tags, 
+        'sentiment': polarity, 
+        'subjectivity': subjectivity
+    }
     return jsonify(response_data)
 
 if __name__ == '__main__':

@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
         chip.innerText = tag;
         tagContainer.appendChild(chip);
       });
+      // DISPLAY SENTIMENT & SUBJECTIVITY
+      // TODO: result[0].result["sentiment"] = 1 -> positive  = 0 -> neutral  = -1 -> negative 
+      // TODO: result[0].result["subjectivity"] = 1 -> objective  = 0 -> neutral  = -1 -> subjective
     } else {
       summaryContainer.innerText = "Summary not available";
       tagContainer.innerText = "Tags not available";
