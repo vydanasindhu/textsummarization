@@ -68,13 +68,6 @@ def summarize_using_spacy(text, number_of_sentences):
     final_sentences = [ w.text for w in summarized_sentences ]
     summary = ' '.join(final_sentences)
 
-    # sentiment Analysis
-    doc_mini = nlp(summary)
-    sentiment = doc_mini.sentiment
-    print("SENTIMENT: ", sentiment)
-    print(f"Polarity: {sentiment.polarity:.2f}")
-    print(f"Subjectivity: {sentiment.subjectivity:.2f}")
-
     # Get top-5 tags
     tags = [tag for tag, _ in freq_word.most_common(5)]
     return post_process_summary(summary), tags
