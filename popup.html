@@ -16,10 +16,25 @@
       align-items: center;
     }
 
+    .input-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
     input[type="number"] {
       padding: 5px 10px;
-      width: 100px;
-      margin-bottom: 10px;
+      width: 60px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-right: 10px;
     }
 
     button {
@@ -30,7 +45,6 @@
       background-color: #007bff;
       color: white;
       cursor: pointer;
-      margin-bottom: 15px;
     }
 
     button:hover {
@@ -64,6 +78,7 @@
       word-wrap: break-word;
       margin-top: 5px;
     }
+
     .chip {
       display: inline-block;
       padding: 5px 10px;
@@ -75,6 +90,7 @@
       background-color: #007bff;
       color: white;
     }
+
     .lds-dual-ring {
       display: none;
       position: absolute;
@@ -84,6 +100,11 @@
       width: 64px;
       height: 64px;
     }
+
+    #results {
+      margin-top: 15px; 
+    }
+
 
     .lds-dual-ring:after {
       content: " ";
@@ -97,30 +118,52 @@
       animation: lds-dual-ring 1.2s linear infinite;
     }
 
+    .hidden {
+      display: none;
+    }
+
+    .result-item {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    #sentiment-container {
+      font-size: 20px;
+    }
+
     @keyframes lds-dual-ring {
       0% {
         transform: rotate(0deg);
       }
       100% {
         transform: rotate(360deg);
+     
       }
     }
-  </style>
+    </style>
   <script src="popup.js"></script>
 </head>
-<body>
-  <div class="container">
-    <label for="num-sentences">Number of sentences:</label>
-    <input type="number" id="num-sentences" min="1" required>
-    <button id="summarize">Summarize Article</button>
-    <div id="loading-icon" class="lds-dual-ring"></div>
 
-    <textarea id="summary" readonly></textarea>
-    <div class="tags-container">
-      <div class="tags-label">Tags:</div>
-      <br>
-      <div id="tags" class="tags-content-container"></div> 
+  <body>
+    <div class="container">
+      <div class="input-container">
+        <label for="num-sentences">Number of sentences:</label>
+        <input type="number" id="num-sentences" min="1" max="10" required>
+        <button id="summarize">Summarize Article</button>
+      </div>
+      <div id="loading-icon" class="lds-dual-ring"></div>
+      <textarea id="summary" readonly></textarea>
+      <div id="results" class="hidden"> <!-- Container with margin -->
+        <div id="sentiment-container" class="result-item"></div>
+        <button id="copy-citation" class="result-item">Copy Citation</button>
+        <button id="copy-summary" class="result-item">Copy Summary</button>
+      </div>
+      <div class="tags-container">
+        <div class="tags-label">Tags:</div>
+        <br>
+        <div id="tags" class="tags-content-container"></div>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
+
 </html>
