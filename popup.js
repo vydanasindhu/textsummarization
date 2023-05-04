@@ -39,20 +39,24 @@ document.addEventListener("DOMContentLoaded", () => {
         tagContainer.appendChild(chip);
       });
       const sentiment = result[0].result["sentiment"];
-    switch (sentiment) {
-    case 1:
-    sentimentContainer.innerText = "\uD83D\uDE03"; // 😃
-    break;
-  case 0:
-    sentimentContainer.innerText = "\uD83D\uDE10"; // 😐
-    break;
-  case -1:
-    sentimentContainer.innerText = "\u2639\uFE0F"; // ☹️
-    break;
-  default:
-    sentimentContainer.innerText = "Sentiment not available";
-    break;
-}
+      sentimentContainer.className = ""; 
+      switch (sentiment) {
+        case 1:
+          sentimentContainer.innerText = "\uD83D\uDE03"; // 😃
+          sentimentContainer.classList.add("positive");
+          break;
+        case 0:
+          sentimentContainer.innerText = "\uD83D\uDE10"; // 😐
+          sentimentContainer.classList.add("neutral");
+          break;
+        case -1:
+          sentimentContainer.innerText = "\u2639\uFE0F"; // ☹️
+          sentimentContainer.classList.add("negative");
+          break;
+        default:
+          sentimentContainer.innerText = "Sentiment not available";
+          break;
+      }
       copyCitationButton.addEventListener("click", () => {
         const citation = `Citation: ${activeTab.title}. Retrieved from ${activeTab.url}`;
         navigator.clipboard.writeText(citation).then(() => {
