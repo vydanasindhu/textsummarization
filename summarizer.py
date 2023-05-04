@@ -13,6 +13,8 @@ from sumy.utils import get_stop_words
 import math
 from newspaper import Article
 from textblob import TextBlob
+import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 CORS(app)
@@ -127,23 +129,93 @@ def get_subjectivity_scale(avg_subjectivity):
     else: 
         return -1                   # subjective
 
+
+def generate_citations(website_url):
+    metadata = get_metadata_information(website_url)
+    citation_parts = []
+
+    if metadata.get("author"):
+        citation_parts.append(metadata["author"])
+
+    if metadata.get("date_published"):
+        citation_parts.append(f"({metadata['date_published']})")
+
+    if metadata.get("title"):
+        citation_parts.append(metadata["title"])
+
+    citation_parts.append(website_url)
+
+    citation = ". ".join(citation_parts)
+    return citation
+
+def get_metadata_information(website_url):
+    response = requests.get(website_url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    title_tag = soup.find('title')
+    if title_tag:
+        title = title_tag.text.strip()
+    else:
+        title_tag = soup.find('h1', {'class': 'title'})
+        title = title_tag.text.strip() if title_tag else ""
+
+    author_tag = soup.find('meta', {'name': 'author'})
+    if author_tag:
+        author = author_tag.get('content')
+    else:
+        author_tag = soup.find('span', {'class': 'author'}) or soup.find('div', {'class': 'author'})
+        author = author_tag.text if author_tag else ""
+    
+    date_published_tag = soup.find('meta', {'property': 'article:published_time'})
+    if date_published_tag:
+        date_published = date_published_tag.get('content').strip()
+    else:
+        date_published_tag = soup.find('time', {'class': 'published'})
+        date_published = date_published_tag.get('datetime').strip() if date_published_tag else ""
+
+    metadata = {
+        "title": title,
+        "author": author,
+        "website_url": website_url,
+        "date_published": date_published
+    }
+    return metadata
+
 @app.route('/summarize', methods=['POST'])
 def example_api():
     data = request.json
-    message = data['message']
+    website_url = data['message']
     numSentences = data.get('numSentences', 2)  # Get the number of sentences from the request data
     numSentences = max(1, int(numSentences))  # Ensure numSentences is at least 1
-    article = Article(message)
-    article.download()
-    article.parse()
-    text = article.text
+    try:
+        article = Article(website_url)
+        article.download()
+        article.parse()
+        text = article.text
+    except requests.exceptions.RequestException as e:
+        print("FAILURE EXCEPTION HIT: ", e)
+        text = ""
+    if text == "":
+        response = requests.get(website_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        main_content = soup.find('div', {'class': 'main-content'})
+        if main_content:
+            text = main_content.get_text()
+            text = ' '.join(text.split())
+    
+        if text == "":
+            text = soup.body.get_text(separator=' ')
+
+        if text == "":
+            return None
+    citation = generate_citations(website_url)
     summary, tags = ensemble_summarization(text, numSentences)  # Use the numSentences value when calling the summarize function
     polarity, subjectivity = get_sentiment(text)
     response_data = {
         'summary': summary, 
         'tags': tags, 
         'sentiment': polarity, 
-        'subjectivity': subjectivity
+        'subjectivity': subjectivity,
+        'citation': citation
     }
     return jsonify(response_data)
 

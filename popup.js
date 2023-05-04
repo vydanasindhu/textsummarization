@@ -7,15 +7,22 @@ document.addEventListener("DOMContentLoaded", () => {
   summarizeButton.addEventListener("click", async () => {
     const activeTab = await getActiveTab();
     const numSentences = numSentencesInput.value;
+    summaryContainer.innerText = ""
+    const loadingIcon = document.getElementById("loading-icon");
+    loadingIcon.style.display = "inline-block";
     const result = await chrome.scripting.executeScript({
       target: { tabId: activeTab.id },
       func: summarize,
       args: [numSentences], 
     });
+    loadingIcon.style.display = "none";
     if (result[0].result) {
-      summaryContainer.innerText = result[0].result["summary"] || "";
+      summaryContainer.innerText = result[0].result["summary"] || "Summary not available";
       tagContainer.innerHTML = "";
       const tags = result[0].result["tags"] || [];
+      if (tags.length == 0) {
+        tagContainer.innerHTML = "Tags not available"
+      }
       tags.forEach(tag => {
         const chip = document.createElement('span');
         chip.className = 'chip';
