@@ -58,19 +58,6 @@
     button:hover {
       background-color: #0056b3;
     }
-
-
-    .positive {
-      color: green;
-    }
-  
-    .neutral {
-      color: yellow;
-    }
-  
-    .negative {
-      color: red;
-    }
     
     textarea {
       width: 100%;
@@ -85,6 +72,7 @@
     .tags-container {
       margin-top: 10px;
       width: 100%;
+      align-items: center;
     }
 
     .tags-label {
@@ -123,8 +111,11 @@
     }
 
     #results {
-      margin-top: 15px; 
+      display: flex; 
+      align-items: center;
+      margin-top: 15px;
     }
+
 
 
     .lds-dual-ring:after {
@@ -149,7 +140,12 @@
     }
 
     #sentiment-container {
-      font-size: 12px;
+      margin-right: 10px; 
+      font-size: 30px;
+    }
+
+    .hidden {
+      display: none;
     }
 
     @keyframes lds-dual-ring {
@@ -165,36 +161,40 @@
   <script src="popup.js"></script>
 </head>
 
-  <body>
-    <div class="container">
-      <div class="input-container">
-        <label for="num-sentences">Number of sentences:</label>
-        <input type="number" id="num-sentences" min="1" max="10" required>
-        <div id="translate" class="result-item">
-          <select id="language-selection">
-            <option value="English">English</option>
-            <option value="French">French</option>
-            <option value="Spanish">Spanish</option>
-            <option value="German">German</option>
-            <option value="Italian">Italian</option>
-            <option value="Russian">Russian</option>
-            <option value="Hindi">Hindi</option>
-            <option value="Japanese">Japanese</option>
-          </select>
-        </div>
-        <button id="summarize">Summarize Article</button>
+<body>
+  <div class="container">
+    <div class="input-container">
+      <label for="num-sentences">Number of sentences:</label>
+      <input type="number" id="num-sentences" min="1" max="10" required>
+      <div id="translate" class="result-item">
+        <select id="language-selection">
+          <option value="English">English</option>
+          <option value="French">French</option>
+          <option value="Spanish">Spanish</option>
+          <option value="German">German</option>
+          <option value="Italian">Italian</option>
+          <option value="Russian">Russian</option>
+          <option value="Hindi">Hindi</option>
+          <option value="Japanese">Japanese</option>
+        </select>
       </div>
-      <div id="loading-icon" class="lds-dual-ring"></div>
-      <textarea id="summary" readonly></textarea>
-      <div id="results" class="hidden"> <!-- Container with margin -->
-        <div id="sentiment-container" class="result-item"></div>
-        <button id="copy-citation" class="result-item">Copy Citation</button>
-        <button id="copy-summary" class="result-item">Copy Summary</button>
-      </div>
-      <div class="tags-container">
-        <div id="tags" class="tags-content-container"></div>
-      </div>
+      <button id="summarize">Summarize Article</button>
     </div>
-  </body>
+    <div id="loading-icon" class="lds-dual-ring"></div>
+    <textarea id="summary" readonly></textarea>
+    <div id="results" class="hidden"> 
+      <div id="sentiment-container" class="result-item">
+       
+        <span id="sentiment-emoji" role="img" aria-label="Sentiment Emoji"></span>
+      </div>
+      <button id="copy-citation" class="result-item">Copy Citation</button>
+      <button id="copy-summary" class="result-item">Copy Summary</button>
+    </div>
+    <div class="tags-container">
+      <div id="tags" class="tags-content-container"></div>
+    </div>
+  </div>
+</body>
+
 
 </html>
