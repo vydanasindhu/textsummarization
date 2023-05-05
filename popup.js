@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const copySummaryButton = document.getElementById("copy-summary");
   const resultsContainer = document.getElementById("results");
   const numSentences = document.getElementById('num-sentences');
-  const targetLang = document.getElementById("target-lang");
+  const targetLang = document.getElementById("language-selection");
 
   numSentences.addEventListener('input', function() {
     if (parseInt(this.value) > 10) {
@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   summarizeButton.addEventListener("click", async () => {
     const numSentences = numSentencesInput.value;
+    const target_lang = targetLang.value;
     const activeTab = await getActiveTab();
     summaryContainer.innerText = "";
     const loadingIcon = document.getElementById("loading-icon");
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const result = await chrome.scripting.executeScript({
       target: { tabId: activeTab.id },
       func: summarize,
-      args: [numSentences, targetLang],
+      args: [numSentences, target_lang],
     });
     loadingIcon.style.display = "none";
     resultsContainer.classList.remove("hidden");

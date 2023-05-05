@@ -30,8 +30,8 @@ lang_dict = {
     'German': 'de',
     'Italian': 'it',
     'Russian': 'ru',
-    'Chinese': 'zh',
     'Japanese': 'ja',
+    'Hindi': 'hi'
 }
 
 # Post Processing techniques
