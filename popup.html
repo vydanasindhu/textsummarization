@@ -170,12 +170,6 @@
       <div class="input-container">
         <label for="num-sentences">Number of sentences:</label>
         <input type="number" id="num-sentences" min="1" max="10" required>
-        <button id="summarize">Summarize Article</button>
-      </div>
-      <div id="loading-icon" class="lds-dual-ring"></div>
-      <textarea id="summary" readonly></textarea>
-      <div id="results" class="hidden"> <!-- Container with margin -->
-        <div id="sentiment-container" class="result-item"></div>
         <div id="translate" class="result-item">
           <select id="language-selection">
             <option value="en">English</option>
@@ -187,8 +181,13 @@
             <option value="zh">Chinese</option>
             <option value="ja">Japanese</option>
           </select>
-          <button id="translate">Translate</button>
         </div>
+        <button id="summarize">Summarize Article</button>
+      </div>
+      <div id="loading-icon" class="lds-dual-ring"></div>
+      <textarea id="summary" readonly></textarea>
+      <div id="results" class="hidden"> <!-- Container with margin -->
+        <div id="sentiment-container" class="result-item"></div>
         <button id="copy-citation" class="result-item">Copy Citation</button>
         <button id="copy-summary" class="result-item">Copy Summary</button>
       </div>
