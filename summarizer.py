@@ -15,12 +15,24 @@ from newspaper import Article
 from textblob import TextBlob
 import requests
 from bs4 import BeautifulSoup
+from deep_translator import MyMemoryTranslator
 
 app = Flask(__name__)
 CORS(app)
 
 import nltk
 nltk.download('punkt')
+
+lang_dict = {
+    'English': 'en',
+    'French': 'fr',
+    'Spanish': 'es',
+    'German': 'de',
+    'Italian': 'it',
+    'Russian': 'ru',
+    'Chinese': 'zh',
+    'Japanese': 'ja',
+}
 
 # Post Processing techniques
 def post_process_summary(summary):
@@ -180,12 +192,31 @@ def get_metadata_information(website_url):
     }
     return metadata
 
+def perform_text_translation(text, source_lang, destination_lang, batch_size=400):
+    source_lang_key = lang_dict[source_lang]
+    target_lang_key= lang_dict[destination_lang]
+    translator = MyMemoryTranslator(source=source_lang_key, target=target_lang_key)
+
+    # Split the text into batches of size batch_size
+    num_batches = math.ceil(len(text) / batch_size)
+    batches = [text[i*batch_size:(i+1)*batch_size] for i in range(num_batches)]
+
+    # Translate each batch and concatenate the results
+    translated_batches = []
+    for batch in batches:
+        translated_batch = translator.translate(batch)
+        translated_batches.append(translated_batch)
+    translated_text = ''.join(translated_batches)
+
+    return translated_text
+
 @app.route('/summarize', methods=['POST'])
 def example_api():
     data = request.json
     website_url = data['message']
     numSentences = data.get('numSentences', 2)  # Get the number of sentences from the request data
     numSentences = max(1, int(numSentences))  # Ensure numSentences is at least 1
+    target_lang = data['targetLang']
     try:
         article = Article(website_url)
         article.download()
@@ -210,8 +241,10 @@ def example_api():
     citation = generate_citations(website_url)
     summary, tags = ensemble_summarization(text, numSentences)  # Use the numSentences value when calling the summarize function
     polarity, subjectivity = get_sentiment(text)
+    if target_lang:
+        translated_summary = perform_text_translation(summary, 'English', target_lang)
     response_data = {
-        'summary': summary, 
+        'summary': translated_summary if target_lang else summary, 
         'tags': tags, 
         'sentiment': polarity, 
         'subjectivity': subjectivity,

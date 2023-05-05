@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const copyCitationButton = document.getElementById("copy-citation");
   const copySummaryButton = document.getElementById("copy-summary");
   const resultsContainer = document.getElementById("results");
-
   const numSentences = document.getElementById('num-sentences');
+  const targetLang = document.getElementById("target-lang");
 
   numSentences.addEventListener('input', function() {
     if (parseInt(this.value) > 10) {
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const result = await chrome.scripting.executeScript({
       target: { tabId: activeTab.id },
       func: summarize,
-      args: [numSentences],
+      args: [numSentences, targetLang],
     });
     loadingIcon.style.display = "none";
     resultsContainer.classList.remove("hidden");
@@ -106,9 +106,9 @@ async function getActiveTab() {
   return tab;
 }
 
-async function summarize(numSentences) {
+async function summarize(numSentences, targetLang) {
   const message = window.location.href;
-  const data = { message: message, numSentences: numSentences };
+  const data = { message: message, numSentences: numSentences, targetLang: targetLang };
   try {
     const response = await fetch("http://localhost:8000/summarize", {
       method: "POST",
