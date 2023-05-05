@@ -1,3 +1,5 @@
+let isSummary=false;
+let summaryText = "";
 document.addEventListener("DOMContentLoaded", () => {
   const summarizeButton = document.getElementById("summarize");
   const summaryContainer = document.getElementById("summary");
@@ -8,12 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const copySummaryButton = document.getElementById("copy-summary");
   const resultsContainer = document.getElementById("results");
 
+  const numSentences = document.getElementById('num-sentences');
+
+  numSentences.addEventListener('input', function() {
+    if (parseInt(this.value) > 10) {
+      this.value = 10;
+    }
+  });
   summarizeButton.addEventListener("click", async () => {
     const numSentences = numSentencesInput.value;
-    if (numSentences > 10) {
-      alert("The maximum limit is only 10 sentences to summarize.");
-      return;
-    }
     const activeTab = await getActiveTab();
     summaryContainer.innerText = "";
     const loadingIcon = document.getElementById("loading-icon");
@@ -26,7 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
     loadingIcon.style.display = "none";
     resultsContainer.classList.remove("hidden");
     if (result[0].result) {
-      summaryContainer.innerText = result[0].result["summary"] || "Summary not available";
+      summaryText=result[0].result["summary"] || "Summary not available";
+      summaryContainer.innerText = summaryText;
+      isSummary = true;
       tagContainer.innerHTML = "";
       const tags = result[0].result["tags"] || [];
       if (tags.length == 0) {
@@ -60,25 +67,36 @@ document.addEventListener("DOMContentLoaded", () => {
       copyCitationButton.addEventListener("click", () => {
         const citation = `Citation: ${activeTab.title}. Retrieved from ${activeTab.url}`;
         navigator.clipboard.writeText(citation).then(() => {
-          alert("Citation copied to clipboard!");
+          const originalButton = copyCitationButton.innerText;
+          copyCitationButton.innerText = "Copied!";
+          setTimeout(() => {
+            copyCitationButton.innerText = originalButton;
+          }, 2000);
         }, () => {
-          alert("Failed to copy citation.");
+          alert("Failed to copy citation!");
         });
-      });
-
-      copySummaryButton.addEventListener("click", () => {
-        const summaryText = summaryContainer.innerText;
-        navigator.clipboard.writeText(summaryText).then(() => {
-          alert("Summary copied to clipboard!");
-        }, () => {
-          alert("Failed to copy summary.");
-        });
-      });
+      });    
 
     } else {
       summaryContainer.innerText = "Summary not available";
       tagContainer.innerText = "Tags not available";
       sentimentContainer.innerText = "Sentiment not available";
+    }
+  });
+
+  copySummaryButton.addEventListener("click", () => {
+    if (isSummary) {
+      navigator.clipboard.writeText(summaryText).then(() => {
+        const originalButton = copySummaryButton.innerText;
+        copySummaryButton.innerText = "Copied!";
+        setTimeout(() => {
+          copySummaryButton.innerText = originalButton;
+        }, 2000);
+      }, () => {
+        alert("Failed to copy summary.");
+      });
+    } else {
+      alert("No summary available to copy.");
     }
   });
 });
