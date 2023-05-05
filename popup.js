@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tagContainer = document.getElementById("tags");
   const numSentencesInput = document.getElementById("num-sentences");
   const sentimentContainer = document.getElementById("sentiment-container");
+  const languageSelect = document.getElementById('language-selection')
   const copyCitationButton = document.getElementById("copy-citation");
   const copySummaryButton = document.getElementById("copy-summary");
   const resultsContainer = document.getElementById("results");
