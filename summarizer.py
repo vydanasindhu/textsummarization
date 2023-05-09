@@ -128,7 +128,7 @@ def get_sentiment(text):
 def get_sentiment_scale(avg_polarity):
     if avg_polarity >= 0.2:
         return 1                    # Positive
-    elif avg_polarity >= -0.2:
+    elif avg_polarity >= 0:
         return 0                    # Neutral
     else: 
         return -1                   # Negative
